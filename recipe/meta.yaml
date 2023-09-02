@@ -7,7 +7,6 @@ package:
   version: {{ version|replace("-", "_") }}
 
 source:
-  fn: base64url_{{ version }}.tar.gz
   url:
     - {{ cran_mirror }}/src/contrib/base64url_{{ version }}.tar.gz
     - {{ cran_mirror }}/src/contrib/Archive/base64url/base64url_{{ version }}.tar.gz
@@ -16,20 +15,20 @@ source:
 build:
   merge_build_host: True  # [win]
   number: 1006
-  skip: true  # [win32]
   rpaths:
     - lib/R/lib/
     - lib/
 
 requirements:
   build:
-    - {{ compiler('c') }}        # [not win]
+    - {{ compiler('c') }}              # [not win]
     - {{ compiler('m2w64_c') }}        # [win]
     - {{ posix }}filesystem        # [win]
     - {{ posix }}make
     - {{ posix }}sed               # [win]
     - {{ posix }}coreutils         # [win]
     - {{ posix }}zip               # [win]
+    - cross-r-base {{ r_base }}    # [build_platform != target_platform]
   host:
     - r-base
     - r-backports >=1.1.0
@@ -45,7 +44,7 @@ test:
 
 about:
   home: https://github.com/mllg/base64url
-  license: GPL-3
+  license: GPL-3.0-only
   summary: In contrast to RFC3548, the 62nd character ("+") is replaced with "-", the 63rd character
     ("/") is replaced with "_". Furthermore, the encoder does not fill the string with
     trailing "=". The resulting encoded strings comply to the regular expression pattern
@@ -53,7 +52,8 @@ about:
     also comes with a simple base32 encoder/decoder suited for case insensitive file
     systems.
   license_family: GPL3
-  license_file: '{{ environ["PREFIX"] }}/lib/R/share/licenses/GPL-3'
+  license_file:
+    - {{ environ["PREFIX"] }}/lib/R/share/licenses/GPL-3
 
 extra:
   recipe-maintainers:
